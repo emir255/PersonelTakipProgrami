@@ -20,7 +20,7 @@ namespace PersonelTakipProgrami
             InitializeComponent();
         }
         //Veritabanı Bağlantısı
-        SqlConnection baglanti = new SqlConnection(@"Data Source=DESKTOP-FM4UKPC\SQLEXPRESS;Initial Catalog=PersonelTakip;Integrated Security=True");
+        SqlConnection baglanti = new SqlConnection(@"Data Source=DESKTOP-FM4UKPC\SQLEXPRESS;Initial Catalog=PersonelTakip;Integrated Security=True;MultipleActiveResultSets=True");
 
         private void kullanicilistele()
         {
@@ -627,6 +627,46 @@ namespace PersonelTakipProgrami
             {
                 MessageBox.Show("Yazı rengi kırmızı olan alanları yeniden gözden geçiriniz!", "Kayıt Yapılamadı!", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
+        }
+
+        private void button4_Click(object sender, EventArgs e)
+        {
+            if (textBox1.Text.Length == 11)
+            {
+                bool KayitVarmi = false;
+
+                baglanti.Open();
+                SqlCommand komut = new SqlCommand("select *from kullanicilar where tcno = '"+textBox1.Text+"'", baglanti);
+                SqlDataReader read = komut.ExecuteReader();
+                while (read.Read())
+                {
+                    KayitVarmi = true;
+                    SqlCommand komut4 = new SqlCommand("delete from kullanicilar where tcno = '"+textBox1.Text+"'", baglanti);
+                    komut4.ExecuteNonQuery();
+                    MessageBox.Show("Kullanıcı Kaydı Silindi!", "Personel Takip Programı", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                    baglanti.Close();
+                    kullanicilistele();
+                    break;
+                }
+                if (KayitVarmi == false)
+                {
+                    MessageBox.Show("Silinecek kayıt bulunamadı!", "Personel Takip Programı", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+                if (baglanti.State == ConnectionState.Open)
+                {
+                    baglanti.Close();
+                }
+                toppage1temizle();
+            }
+            else
+            {
+                MessageBox.Show("Lütfen 11 karakterden oluşan bir TC Kimlik No giriniz!", "Personel Takip Programı", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private void button5_Click(object sender, EventArgs e)
+        {
+            toppage1temizle();
         }
     }
 }
