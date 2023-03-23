@@ -103,7 +103,7 @@ namespace PersonelTakipProgrami
             }
 
             label12.Text = Form1.adi + " " + Form1.soyadi;
-            
+
             //Personel İşlemleri Ayarları
             maskedTextBox2.Text.ToUpper();
             maskedTextBox3.Text.ToUpper();
@@ -184,7 +184,7 @@ namespace PersonelTakipProgrami
             {
                 errorProvider2.SetError(textBox4, "Kullanıcı Adı 8 karakter olmalı!");
             }
-            if(textBox4.Text.Length == 8 || textBox4.Text == "")
+            if (textBox4.Text.Length == 8 || textBox4.Text == "")
             {
                 errorProvider2.Clear();
             }
@@ -269,7 +269,7 @@ namespace PersonelTakipProgrami
             //progressBar1.Value = ParolaSkoru;
 
             #endregion
-            
+
             string ParolaSeviyesi = "";
             int KucukHarfSkoru = 0, BuyukHarfSkoru = 0, RakamSkoru = 0, SembolSkoru = 0;
             string Sifre = textBox5.Text;
@@ -286,7 +286,7 @@ namespace PersonelTakipProgrami
             Sifre = Sifre.Replace("ü", "u");
             Sifre = Sifre.Replace("Ö", "O");
             Sifre = Sifre.Replace("ö", "o");
-            
+
             // 1 Küçük harf 10 puan, 2 ve üzeri 20 puan.
             int KucukHarfSayisi = Sifre.Length - Regex.Replace(Sifre, "[a-z]", "").Length;
             KucukHarfSkoru = Math.Min(2, KucukHarfSayisi) * 10;
@@ -301,7 +301,7 @@ namespace PersonelTakipProgrami
             SembolSkoru = Math.Min(2, SembolSayisi) * 10;
 
             ParolaSkoru = KucukHarfSkoru + BuyukHarfSkoru + RakamSkoru + SembolSkoru;
-            
+
             if (Sifre.Length == 9)
             {
                 ParolaSkoru += 10;
@@ -313,7 +313,7 @@ namespace PersonelTakipProgrami
 
             if (KucukHarfSkoru == 0 || BuyukHarfSkoru == 0 || RakamSkoru == 0 || SembolSkoru == 0)
             {
-                label22.Text = "Büyük harf, küçük harf, rakam ve sembol mutlaka kullanmalısın!";
+                label22.Text = "Büyük harf, küçük harf, rakam ve sembol kullanmalısın!";
             }
             else if (KucukHarfSkoru != 0 && BuyukHarfSkoru != 0 && RakamSkoru != 0 && SembolSkoru != 0)
             {
@@ -357,9 +357,9 @@ namespace PersonelTakipProgrami
             bool KayitKontrol = false;
 
             #region Kayıtın veri tabanında olup olmadığını tcno ya göre kontrol ediliyor.
-            
+
             baglanti.Open();
-            SqlCommand komut = new SqlCommand("select *from kullanicilar where tcno= '"+textBox1.Text+"'", baglanti);
+            SqlCommand komut = new SqlCommand("select *from kullanicilar where tcno= '" + textBox1.Text + "'", baglanti);
             SqlDataReader read = komut.ExecuteReader();
             while (read.Read())
             {
@@ -372,7 +372,7 @@ namespace PersonelTakipProgrami
             if (KayitKontrol == false)
             {
                 #region textboxlara veri girişi kontrolü
-                
+
                 // TC Kimlik No Kontrolü
                 if (textBox1.Text.Length < 11 || textBox1.Text == "")
                 {
@@ -448,19 +448,19 @@ namespace PersonelTakipProgrami
                         komut2.Parameters.AddWithValue("@ad", textBox2.Text);
                         komut2.Parameters.AddWithValue("@soyad", textBox3.Text);
                         komut2.Parameters.AddWithValue("@yetki", yetki);
-                        komut2.Parameters.AddWithValue("@kullaniciadi", textBox4.Text );
+                        komut2.Parameters.AddWithValue("@kullaniciadi", textBox4.Text);
                         komut2.Parameters.AddWithValue("@parola", textBox5.Text);
                         komut2.ExecuteNonQuery();
                         baglanti.Close();
-                        MessageBox.Show("Yeni kullanıcı kaydı oluşturuldu.","Kayıt Eklendi!", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
-                        label1.ForeColor = Color.Black;
-                        label5.ForeColor = Color.Black;
+                        MessageBox.Show("Yeni kullanıcı kaydı oluşturuldu.", "Kayıt Eklendi!", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                        //label1.ForeColor = Color.Black;
+                        //label5.ForeColor = Color.Black;
                         toppage1temizle();
                     }
                     catch (Exception hatamsj)
                     {
                         MessageBox.Show(hatamsj.Message);
-                        
+
                         if (baglanti.State == ConnectionState.Open)
                         {
                             baglanti.Close();
@@ -482,18 +482,18 @@ namespace PersonelTakipProgrami
         private void button1_Click(object sender, EventArgs e)
         {
             bool KayitAramaDurumu = false;
-            
+
             if (textBox1.Text.Length == 11)
             {
                 baglanti.Open();
-                SqlCommand komut = new SqlCommand("select *from kullanicilar where tcno = '"+textBox1.Text+"'", baglanti);
+                SqlCommand komut = new SqlCommand("select *from kullanicilar where tcno = '" + textBox1.Text + "'", baglanti);
                 SqlDataReader read = komut.ExecuteReader();
                 while (read.Read())
                 {
                     KayitAramaDurumu = true;
-                    
-                    textBox2.Text = read.GetValue(2).ToString();
-                    textBox3.Text = read.GetValue(3).ToString();
+
+                    textBox2.Text = read.GetValue(1).ToString();
+                    textBox3.Text = read.GetValue(2).ToString();
                     if (read.GetValue(4).ToString() == "Yönetici")
                     {
                         radioButton1.Checked = true;
@@ -519,6 +519,113 @@ namespace PersonelTakipProgrami
             {
                 MessageBox.Show("Lütfen 11 haneli bir TC Kimlik No giriniz!", "Uyarı!", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 toppage1temizle();
+            }
+        }
+
+        private void button3_Click(object sender, EventArgs e)
+        {
+            string yetki = "";
+            #region textboxlara veri girişi kontrolü
+
+            // TC Kimlik No Kontrolü
+            if (textBox1.Text.Length < 11 || textBox1.Text == "")
+            {
+                label1.ForeColor = Color.Red;
+            }
+            else
+            {
+                label1.ForeColor = Color.Black;
+            }
+            // Ad Kontrolü
+            if (textBox2.Text.Length < 2 || textBox2.Text == "")
+            {
+                label2.ForeColor = Color.Red;
+            }
+            else
+            {
+                label2.ForeColor = Color.Black;
+            }
+            // Soyad Kontrolü
+            if (textBox3.Text.Length < 2 || textBox3.Text == "")
+            {
+                label3.ForeColor = Color.Red;
+            }
+            else
+            {
+                label3.ForeColor = Color.Black;
+            }
+            // Kullanıcı Adı Kontrolü
+            if (textBox4.Text.Length != 8 || textBox4.Text == "")
+            {
+                label5.ForeColor = Color.Red;
+            }
+            else
+            {
+                label5.ForeColor = Color.Black;
+            }
+            // Parola Kontrolü
+            if (ParolaSkoru < 70 || textBox5.Text == "")
+            {
+                label6.ForeColor = Color.Red;
+            }
+            else
+            {
+                label6.ForeColor = Color.Black;
+            }
+            // Parola Tekrar Kontrolü
+            if (textBox5.Text != textBox6.Text || textBox6.Text == "")
+            {
+                label7.ForeColor = Color.Red;
+            }
+            else
+            {
+                label7.ForeColor = Color.Black;
+            }
+            #endregion
+
+            if (textBox1.Text.Length == 11 && textBox2.Text.Length > 1 && textBox3.Text.Length > 1 && textBox4.Text.Length == 8 && textBox5.Text == textBox6.Text && ParolaSkoru >= 70)
+            {
+                if (radioButton1.Checked == true)
+                {
+                    yetki = "Yönetici";
+                }
+                else if (radioButton2.Checked == true)
+                {
+                    yetki = "Kullanıcı";
+                }
+
+                try
+                {
+                    baglanti.Open();
+                    SqlCommand komut2 = new SqlCommand("update kullanicilar set ad=@ad, soyad=@soyad, yetki=@yetki, kullaniciadi=@kullaniciadi, parola=@parola where tcno = @tcno", baglanti);
+                    komut2.Parameters.AddWithValue("@tcno", textBox1.Text);
+                    komut2.Parameters.AddWithValue("@ad", textBox2.Text);
+                    komut2.Parameters.AddWithValue("@soyad", textBox3.Text);
+                    komut2.Parameters.AddWithValue("@yetki", yetki);
+                    komut2.Parameters.AddWithValue("@kullaniciadi", textBox4.Text);
+                    komut2.Parameters.AddWithValue("@parola", textBox5.Text);
+                    komut2.ExecuteNonQuery();
+                    baglanti.Close();
+                    MessageBox.Show("Kullanıcı bilgileri güncellendi!", "Personel Takip Programı", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                    //label1.ForeColor = Color.Black;
+                    //label5.ForeColor = Color.Black;
+                    toppage1temizle();
+                    kullanicilistele();
+                }
+                catch (Exception hatamsj)
+                {
+                    MessageBox.Show(hatamsj.Message);
+
+                    if (baglanti.State == ConnectionState.Open)
+                    {
+                        baglanti.Close();
+                    }
+
+                }
+            }
+            else
+            {
+                MessageBox.Show("Yazı rengi kırmızı olan alanları yeniden gözden geçiriniz!", "Kayıt Yapılamadı!", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
     }
