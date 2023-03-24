@@ -477,6 +477,7 @@
             this.button8.TabIndex = 22;
             this.button8.Text = "KAYDET";
             this.button8.UseVisualStyleBackColor = true;
+            this.button8.Click += new System.EventHandler(this.button8_Click);
             // 
             // button7
             // 
@@ -495,13 +496,16 @@
             this.button6.TabIndex = 20;
             this.button6.Text = "Gözat";
             this.button6.UseVisualStyleBackColor = true;
+            this.button6.Click += new System.EventHandler(this.button6_Click);
             // 
             // maskedTextBox4
             // 
             this.maskedTextBox4.Location = new System.Drawing.Point(551, 194);
+            this.maskedTextBox4.Mask = "000000000";
             this.maskedTextBox4.Name = "maskedTextBox4";
             this.maskedTextBox4.Size = new System.Drawing.Size(121, 22);
             this.maskedTextBox4.TabIndex = 19;
+            this.maskedTextBox4.ValidatingType = typeof(int);
             // 
             // comboBox3
             // 
@@ -608,6 +612,7 @@
             this.maskedTextBox3.Name = "maskedTextBox3";
             this.maskedTextBox3.Size = new System.Drawing.Size(200, 22);
             this.maskedTextBox3.TabIndex = 9;
+            this.maskedTextBox3.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.maskedTextBox3_KeyPress);
             // 
             // maskedTextBox2
             // 
@@ -616,6 +621,7 @@
             this.maskedTextBox2.Name = "maskedTextBox2";
             this.maskedTextBox2.Size = new System.Drawing.Size(200, 22);
             this.maskedTextBox2.TabIndex = 8;
+            this.maskedTextBox2.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.maskedTextBox2_KeyPress);
             // 
             // maskedTextBox1
             // 

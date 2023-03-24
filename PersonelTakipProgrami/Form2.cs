@@ -105,8 +105,6 @@ namespace PersonelTakipProgrami
             label12.Text = Form1.adi + " " + Form1.soyadi;
 
             //Personel İşlemleri Ayarları
-            maskedTextBox2.Text.ToUpper();
-            maskedTextBox3.Text.ToUpper();
             DateTime zaman = DateTime.Now;
             int yil = int.Parse(zaman.ToString("yyyy"));
             int ay = int.Parse(zaman.ToString("MM"));
@@ -351,6 +349,16 @@ namespace PersonelTakipProgrami
             }
         }
 
+        private void maskedTextBox2_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            e.KeyChar = (e.KeyChar.ToString()).ToUpper().ToCharArray()[0];
+        }
+
+        private void maskedTextBox3_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            e.KeyChar = (e.KeyChar.ToString()).ToUpper().ToCharArray()[0];
+        }
+
         private void button2_Click(object sender, EventArgs e)
         {
             string yetki = "";
@@ -371,7 +379,7 @@ namespace PersonelTakipProgrami
 
             if (KayitKontrol == false)
             {
-                #region textboxlara veri girişi kontrolü
+                #region Textboxlara veri girişi kontrolü
 
                 // TC Kimlik No Kontrolü
                 if (textBox1.Text.Length < 11 || textBox1.Text == "")
@@ -459,7 +467,7 @@ namespace PersonelTakipProgrami
                     }
                     catch (Exception hatamsj)
                     {
-                        MessageBox.Show(hatamsj.Message);
+                        MessageBox.Show(hatamsj.Message, "Personel Takip Programı", MessageBoxButtons.OK, MessageBoxIcon.Error);
 
                         if (baglanti.State == ConnectionState.Open)
                         {
@@ -668,5 +676,181 @@ namespace PersonelTakipProgrami
         {
             toppage1temizle();
         }
+
+        private void button6_Click(object sender, EventArgs e)
+        {
+            OpenFileDialog resimsec = new OpenFileDialog();
+            resimsec.Title = "Personel Resmi Seçiniz...";
+            resimsec.Filter = "JPG Dosyalar (*.jgp) | *.jpg";
+            if (resimsec.ShowDialog() == DialogResult.OK)
+            {
+                pictureBox2.Image = new Bitmap(resimsec.OpenFile());
+            }
+        }
+
+        private void button8_Click(object sender, EventArgs e)
+        {
+            string Cinsiyet = "";
+            bool KayitKontrol = false;
+
+            #region Kayıtın veri tabanında olup olmadığını tcno ya göre kontrol ediliyor.
+
+            baglanti.Open();
+            SqlCommand komut = new SqlCommand("select *from personeller where tcno= '" + maskedTextBox1.Text + "'", baglanti);
+            SqlDataReader read = komut.ExecuteReader();
+            while (read.Read())
+            {
+                KayitKontrol = true;
+            }
+            baglanti.Close();
+
+            #endregion
+
+            if (KayitKontrol == false)
+            {
+                #region Alanlara veri girişi kontrolü
+
+                if (pictureBox2.Image == null)
+                {
+                    button6.ForeColor = Color.Red;
+                }
+                else
+                {
+                    button6.ForeColor = Color.Black;
+                }
+
+                if (maskedTextBox1.MaskCompleted == false)
+                {
+                    label13.ForeColor = Color.Red;
+                }
+                else
+                {
+                    label13.ForeColor = Color.Black;
+                }
+
+                if (maskedTextBox2.MaskCompleted == false)
+                {
+                    label14.ForeColor = Color.Red;
+                }
+                else
+                {
+                    label14.ForeColor = Color.Black;
+                }
+
+                if (maskedTextBox3.MaskCompleted == false)
+                {
+                    label15.ForeColor = Color.Red;
+                }
+                else
+                {
+                    label15.ForeColor = Color.Black;
+                }
+
+                if (comboBox1.Text == "")
+                {
+                    label17.ForeColor = Color.Red;
+                }
+                else
+                {
+                    label17.ForeColor = Color.Black;
+                }
+
+                if (comboBox2.Text == "")
+                {
+                    label19.ForeColor = Color.Red;
+                }
+                else
+                {
+                    label19.ForeColor = Color.Black;
+                }
+
+                if (comboBox3.Text == "")
+                {
+                    label20.ForeColor = Color.Red;
+                }
+                else
+                {
+                    label20.ForeColor = Color.Black;
+                }
+
+                if (maskedTextBox3.Text == "")
+                {
+                    label21.ForeColor = Color.Red;
+                }
+                else
+                {
+                    label21.ForeColor = Color.Black;
+                }
+
+                if (maskedTextBox4.Text == "")
+                {
+                    label21.ForeColor = Color.Red;
+                }
+                else
+                {
+                    label21.ForeColor = Color.Black;
+                }
+
+                #endregion
+
+                if (pictureBox2.Image != null && maskedTextBox1.MaskCompleted == true && maskedTextBox2.MaskCompleted == true && maskedTextBox3.MaskCompleted == true && comboBox1.Text != "" && comboBox2.Text != "" && comboBox3.Text != "" && maskedTextBox4.Text != "")
+                {
+                    if (radioButton3.Checked == true)
+                    {
+                        Cinsiyet = "Bay";
+                    }
+                    else if (radioButton4.Checked == true)
+                    {
+                        Cinsiyet = "Bayan";
+                    }
+
+                    try
+                    {
+                        baglanti.Open();
+                        SqlCommand komut2 = new SqlCommand("insert into personeller values(@tcno, @ad, @soyad, @cinsiyet, @mezuniyet, @dogumtarihi, @gorevi, @gorevyeri, @maas)", baglanti);
+                        komut2.Parameters.AddWithValue("@tcno", maskedTextBox1.Text);
+                        komut2.Parameters.AddWithValue("@ad", maskedTextBox2.Text);
+                        komut2.Parameters.AddWithValue("@soyad", maskedTextBox3.Text);
+                        komut2.Parameters.AddWithValue("@cinsiyet", Cinsiyet);
+                        komut2.Parameters.AddWithValue("@mezuniyet", comboBox1.Text);
+                        komut2.Parameters.AddWithValue("@dogumtarihi", dateTimePicker1.Value);
+                        komut2.Parameters.AddWithValue("@gorevi", comboBox2.Text);
+                        komut2.Parameters.AddWithValue("@gorevyeri", comboBox3.Text);
+                        komut2.Parameters.AddWithValue("@maas", maskedTextBox4.Text);
+                        komut2.ExecuteNonQuery();
+                        baglanti.Close();
+                        if (!Directory.Exists(Application.StartupPath + "\\personelresimler"))
+                        {
+                            Directory.CreateDirectory(Application.StartupPath + "\\personelresimler");
+                        }
+                        pictureBox2.Image.Save(Application.StartupPath + "\\personelresimler\\" + maskedTextBox1.Text + ".jpg");
+                        
+                        MessageBox.Show("Personel kaydı oluşturuldu.", "Kayıt Eklendi!", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                        toppage2temizle();
+                        personellistele();
+
+                    }
+                    catch (Exception hatamsj)
+                    {
+                        MessageBox.Show(hatamsj.Message, "Personel Takip Programı", MessageBoxButtons.OK, MessageBoxIcon.Error);
+
+                        if (baglanti.State == ConnectionState.Open)
+                        {
+                            baglanti.Close();
+                        }
+                    }
+                }
+                else
+                {
+                    MessageBox.Show("Yazı rengi kırmızı olan alanları yeniden gözden geçiriniz!", "Kayıt Yapılamadı!", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+            }
+            else
+            {
+                MessageBox.Show("Girilen TC Kimlik Numarası daha önceden kayıtlıdır.", "UYARI!", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        
     }
 }
