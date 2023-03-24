@@ -644,12 +644,12 @@ namespace PersonelTakipProgrami
                 bool KayitVarmi = false;
 
                 baglanti.Open();
-                SqlCommand komut = new SqlCommand("select *from kullanicilar where tcno = '"+textBox1.Text+"'", baglanti);
+                SqlCommand komut = new SqlCommand("select *from kullanicilar where tcno = '" + textBox1.Text + "'", baglanti);
                 SqlDataReader read = komut.ExecuteReader();
                 while (read.Read())
                 {
                     KayitVarmi = true;
-                    SqlCommand komut4 = new SqlCommand("delete from kullanicilar where tcno = '"+textBox1.Text+"'", baglanti);
+                    SqlCommand komut4 = new SqlCommand("delete from kullanicilar where tcno = '" + textBox1.Text + "'", baglanti);
                     komut4.ExecuteNonQuery();
                     MessageBox.Show("Kullanıcı Kaydı Silindi!", "Personel Takip Programı", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
                     baglanti.Close();
@@ -824,7 +824,7 @@ namespace PersonelTakipProgrami
                             Directory.CreateDirectory(Application.StartupPath + "\\personelresimler");
                         }
                         pictureBox2.Image.Save(Application.StartupPath + "\\personelresimler\\" + maskedTextBox1.Text + ".jpg");
-                        
+
                         MessageBox.Show("Personel kaydı oluşturuldu.", "Kayıt Eklendi!", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
                         toppage2temizle();
                         personellistele();
@@ -904,5 +904,203 @@ namespace PersonelTakipProgrami
                 toppage1temizle();
             }
         }
+
+        private void button9_Click(object sender, EventArgs e)
+        {
+            string Cinsiyet = "";
+
+            #region Alanlara veri girişi kontrolü
+
+            if (pictureBox2.Image == null)
+            {
+                button6.ForeColor = Color.Red;
+            }
+            else
+            {
+                button6.ForeColor = Color.Black;
+            }
+
+            if (maskedTextBox1.MaskCompleted == false)
+            {
+                label13.ForeColor = Color.Red;
+            }
+            else
+            {
+                label13.ForeColor = Color.Black;
+            }
+
+            if (maskedTextBox2.MaskCompleted == false)
+            {
+                label14.ForeColor = Color.Red;
+            }
+            else
+            {
+                label14.ForeColor = Color.Black;
+            }
+
+            if (maskedTextBox3.MaskCompleted == false)
+            {
+                label15.ForeColor = Color.Red;
+            }
+            else
+            {
+                label15.ForeColor = Color.Black;
+            }
+
+            if (comboBox1.Text == "")
+            {
+                label17.ForeColor = Color.Red;
+            }
+            else
+            {
+                label17.ForeColor = Color.Black;
+            }
+
+            if (comboBox2.Text == "")
+            {
+                label19.ForeColor = Color.Red;
+            }
+            else
+            {
+                label19.ForeColor = Color.Black;
+            }
+
+            if (comboBox3.Text == "")
+            {
+                label20.ForeColor = Color.Red;
+            }
+            else
+            {
+                label20.ForeColor = Color.Black;
+            }
+
+            if (maskedTextBox3.Text == "")
+            {
+                label21.ForeColor = Color.Red;
+            }
+            else
+            {
+                label21.ForeColor = Color.Black;
+            }
+
+            if (maskedTextBox4.Text == "")
+            {
+                label21.ForeColor = Color.Red;
+            }
+            else
+            {
+                label21.ForeColor = Color.Black;
+            }
+
+            #endregion
+
+            if (pictureBox2.Image != null && maskedTextBox1.MaskCompleted == true && maskedTextBox2.MaskCompleted == true && maskedTextBox3.MaskCompleted == true && comboBox1.Text != "" && comboBox2.Text != "" && comboBox3.Text != "" && maskedTextBox4.Text != "")
+            {
+                if (radioButton3.Checked == true)
+                {
+                    Cinsiyet = "Bay";
+                }
+                else if (radioButton4.Checked == true)
+                {
+                    Cinsiyet = "Bayan";
+                }
+
+                try
+                {
+                    baglanti.Open();
+                    SqlCommand komut2 = new SqlCommand("update personeller set ad=@ad, soyad=@soyad, cinsiyet=@cinsiyet, mezuniyet=@mezuniyet, dogumtarihi=@dogumtarihi, gorevi=@gorevi, gorevyeri=@gorevyeri, maas=@maas where tcno=@tcno", baglanti);
+                    komut2.Parameters.AddWithValue("@tcno", maskedTextBox1.Text);
+                    komut2.Parameters.AddWithValue("@ad", maskedTextBox2.Text);
+                    komut2.Parameters.AddWithValue("@soyad", maskedTextBox3.Text);
+                    komut2.Parameters.AddWithValue("@cinsiyet", Cinsiyet);
+                    komut2.Parameters.AddWithValue("@mezuniyet", comboBox1.Text);
+                    komut2.Parameters.AddWithValue("@dogumtarihi", dateTimePicker1.Value);
+                    komut2.Parameters.AddWithValue("@gorevi", comboBox2.Text);
+                    komut2.Parameters.AddWithValue("@gorevyeri", comboBox3.Text);
+                    komut2.Parameters.AddWithValue("@maas", maskedTextBox4.Text);
+                    komut2.ExecuteNonQuery();
+                    baglanti.Close();
+                    if (!Directory.Exists(Application.StartupPath + "\\personelresimler"))
+                    {
+                        Directory.CreateDirectory(Application.StartupPath + "\\personelresimler");
+                    }
+                    GC.Collect();
+                    GC.WaitForPendingFinalizers();
+                    if (System.IO.File.Exists(Application.StartupPath + "\\personelresimler\\" + maskedTextBox1.Text + ".jpg"))
+                    {
+                        System.IO.File.Delete(Application.StartupPath + "\\personelresimler\\" + maskedTextBox1.Text + ".jpg");
+                    }
+                    pictureBox2.Image.Save(Application.StartupPath + "\\personelresimler\\" + maskedTextBox1.Text + ".jpg");
+
+                    MessageBox.Show("Personel kaydı güncellendi.", "Kayıt Eklendi!", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                    toppage2temizle();
+                    personellistele();
+
+                }
+                catch (Exception hatamsj)
+                {
+                    MessageBox.Show(hatamsj.Message, "Personel Takip Programı", MessageBoxButtons.OK, MessageBoxIcon.Error);
+
+                    if (baglanti.State == ConnectionState.Open)
+                    {
+                        baglanti.Close();
+                    }
+                }
+            }
+            else
+            {
+                MessageBox.Show("Yazı rengi kırmızı olan alanları yeniden gözden geçiriniz!", "Kayıt Yapılamadı!", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private void button10_Click(object sender, EventArgs e)
+        {
+            if (maskedTextBox1.MaskCompleted == true)
+            {
+                bool KayitKontrol = false;
+
+                baglanti.Open();
+                SqlCommand komut = new SqlCommand("select *from personeller where tcno = '" + maskedTextBox1.Text + "'", baglanti);
+                SqlDataReader read = komut.ExecuteReader();
+                while (read.Read())
+                {
+                    KayitKontrol = true;
+                    SqlCommand komut4 = new SqlCommand("delete from personeller where tcno = '" + maskedTextBox1.Text + "'", baglanti);
+                    komut4.ExecuteNonQuery();
+                    MessageBox.Show("Kullanıcı Kaydı Silindi!", "Personel Takip Programı", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                    baglanti.Close();
+                    #region Fotoğrafı silme komutları
+                    pictureBox2.Image = null;
+                    GC.Collect();
+                    GC.WaitForPendingFinalizers();
+                    if (System.IO.File.Exists(Application.StartupPath + "\\personelresimler\\" + maskedTextBox1.Text + ".jpg"))
+                    {
+                        System.IO.File.Delete(Application.StartupPath + "\\personelresimler\\" + maskedTextBox1.Text + ".jpg");
+                    }
+                    #endregion
+                    personellistele();
+                    break;
+                }
+                if (KayitKontrol == false)
+                {
+                    MessageBox.Show("Silinecek kayıt bulunamadı!", "Personel Takip Programı", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+                if (baglanti.State == ConnectionState.Open)
+                {
+                    baglanti.Close();
+                }
+                toppage2temizle();
+            }
+            else
+            {
+                MessageBox.Show("Lütfen 11 karakterden oluşan bir TC Kimlik No giriniz!", "Personel Takip Programı", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private void button11_Click(object sender, EventArgs e)
+        {
+            toppage2temizle();
+        }
     }
-}
+    }
+
