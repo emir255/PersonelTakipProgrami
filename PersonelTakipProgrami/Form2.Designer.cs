@@ -209,7 +209,7 @@
             // 
             // button1
             // 
-            this.button1.Location = new System.Drawing.Point(386, 40);
+            this.button1.Location = new System.Drawing.Point(371, 40);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(75, 28);
             this.button1.TabIndex = 19;
@@ -487,6 +487,7 @@
             this.button7.TabIndex = 21;
             this.button7.Text = "ARA";
             this.button7.UseVisualStyleBackColor = true;
+            this.button7.Click += new System.EventHandler(this.button7_Click);
             // 
             // button6
             // 

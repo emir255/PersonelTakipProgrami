@@ -489,7 +489,7 @@ namespace PersonelTakipProgrami
 
         private void button1_Click(object sender, EventArgs e)
         {
-            bool KayitAramaDurumu = false;
+            bool KayitKontrol = false;
 
             if (textBox1.Text.Length == 11)
             {
@@ -498,25 +498,25 @@ namespace PersonelTakipProgrami
                 SqlDataReader read = komut.ExecuteReader();
                 while (read.Read())
                 {
-                    KayitAramaDurumu = true;
+                    KayitKontrol = true;
 
                     textBox2.Text = read.GetValue(1).ToString();
                     textBox3.Text = read.GetValue(2).ToString();
-                    if (read.GetValue(4).ToString() == "Yönetici")
+                    if (read.GetValue(3).ToString() == "Yönetici")
                     {
                         radioButton1.Checked = true;
                         radioButton2.Checked = false;
                     }
                     else
                     {
-                        radioButton2.Checked = false;
-                        radioButton1.Checked = true;
+                        radioButton1.Checked = false;
+                        radioButton2.Checked = true;
                     }
                     textBox4.Text = read.GetValue(4).ToString();
                     textBox5.Text = read.GetValue(5).ToString();
                     textBox6.Text = read.GetValue(5).ToString();
                 }
-                if (KayitAramaDurumu == false)
+                if (KayitKontrol == false)
                 {
                     MessageBox.Show("Aranan kayıt bulunamadı!", "Uyarı!", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
                     toppage1temizle();
@@ -851,6 +851,58 @@ namespace PersonelTakipProgrami
             }
         }
 
-        
+        private void button7_Click(object sender, EventArgs e)
+        {
+            bool KayitKontrol = false;
+
+            if (maskedTextBox1.Text.Length == 11)
+            {
+                baglanti.Open();
+                SqlCommand komut = new SqlCommand("select *from personeller where tcno = '" + maskedTextBox1.Text + "'", baglanti);
+                SqlDataReader read = komut.ExecuteReader();
+                while (read.Read())
+                {
+                    KayitKontrol = true;
+
+                    try
+                    {
+                        pictureBox2.Image = Image.FromFile(Application.StartupPath + "\\personelresimler\\" + maskedTextBox1.Text + ".jpg");
+                    }
+                    catch
+                    {
+                        pictureBox2.Image = Image.FromFile(Application.StartupPath + "\\personelresimler\\resimyok.jpg");
+                    }
+
+                    maskedTextBox2.Text = read.GetValue(1).ToString();
+                    maskedTextBox3.Text = read.GetValue(2).ToString();
+                    if (read.GetValue(3).ToString() == "Bay")
+                    {
+                        radioButton3.Checked = true;
+                        radioButton4.Checked = false;
+                    }
+                    else
+                    {
+                        radioButton3.Checked = false;
+                        radioButton4.Checked = true;
+                    }
+                    comboBox1.Text = read.GetValue(4).ToString();
+                    dateTimePicker1.Value = Convert.ToDateTime(read.GetValue(5));
+                    comboBox2.Text = read.GetValue(6).ToString();
+                    comboBox3.Text = read.GetValue(7).ToString();
+                    maskedTextBox4.Text = read.GetValue(8).ToString();
+                }
+                if (KayitKontrol == false)
+                {
+                    MessageBox.Show("Aranan kayıt bulunamadı!", "Uyarı!", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                    toppage1temizle();
+                }
+                baglanti.Close();
+            }
+            else
+            {
+                MessageBox.Show("Lütfen 11 haneli bir TC Kimlik No giriniz!", "Uyarı!", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                toppage1temizle();
+            }
+        }
     }
 }
