@@ -1101,6 +1101,19 @@ namespace PersonelTakipProgrami
         {
             toppage2temizle();
         }
+
+        private void Form2_FormClosed(object sender, FormClosedEventArgs e)
+        {
+            if (MessageBox.Show("Çıkış yapılıyor ?", Application.ProductName, MessageBoxButtons.YesNo, MessageBoxIcon.Warning) == DialogResult.Yes)
+            {
+                Application.Exit();
+            }
+            else
+            {
+                Form2 frm2 = new Form2();
+                frm2.Show();
+            }
+        }
     }
     }
 

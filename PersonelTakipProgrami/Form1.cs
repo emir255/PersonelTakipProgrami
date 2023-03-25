@@ -27,7 +27,13 @@ namespace PersonelTakipProgrami
         int hak = 3;
         bool durum = false;
 
-        
+        private void button2_Click(object sender, EventArgs e)
+        {
+            if (MessageBox.Show("Çıkış yapılıyor ?", Application.ProductName, MessageBoxButtons.YesNo, MessageBoxIcon.Warning) == DialogResult.Yes)
+            {
+                Application.Exit();
+            }
+        }        
 
         private void Form1_Load(object sender, EventArgs e)
         {
